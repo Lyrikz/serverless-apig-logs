@@ -1,0 +1,13 @@
+{
+  "name": "serverless-apig-logs",
+  "version": "1.0.0",
+  "description": "Plugin to enable APIGateway logs",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lyrikz/serverless-apig-logs.git"
+  },
+  "keywords": [],
+  "author": "lyrikz <lyrikz@artifakt.io>",
+  "license": "MIT"
+}
