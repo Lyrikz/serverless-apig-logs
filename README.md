@@ -27,7 +27,7 @@ $ sls deploy
 
 ## Config
 
-The plugin provides some configurations. Region and stage default values are from CLI options or serverless file.
+The plugin provides some configurations. All default values are from CLI options or serverless file.
 ```yaml
 # serverless.yml
 
