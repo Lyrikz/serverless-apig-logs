@@ -1,6 +1,6 @@
 # Serverless API Gateway Logs
 
-Serverless plugin to enable API Gateway logs
+Serverless plugin to enable API Gateway logs and extended metrics
 
 ## Install
 
@@ -36,4 +36,9 @@ custom:
     region: 'us-east-1' # default to CLI option (--region) or ${self:provider.region}
     stage: 'dev' # default to CLI option (--stage) or ${self:provider.stage}
     logLevel: 'INFO' # default to CLI option (--apig-log-level) or 'ERROR'
+    dataTraceEnabled: true # Can be overriden by CLI option (--apig-log-dataTraceEnabled)
+    metricsEnabled: true # Can be overriden by CLI option (--apig-metricsEnabled)
 ```
+When parameter `dataTraceEnabled` is set to true full request and response bodies can be found in the logs.
+
+Parameter `metricsEnabled` enables extended CloudWatch metrics for API (api calls, latency, etc). 
