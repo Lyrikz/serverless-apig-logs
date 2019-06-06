@@ -12,6 +12,12 @@ class ServerlessApiGLogs {
         options: {
           'apig-log-level': {
             usage: 'Specify the log level wanted. Possible value : INFO | ERROR'
+          },
+          'apig-log-dataTraceEnabled': {
+            usage: 'If set, full request bodies will be included in the logs'
+          },
+          'apig-metricsEnabled': {
+            usage: 'If set, will enable detailed CloudWatch metrics'
           }
         }
       },
@@ -32,11 +38,16 @@ class ServerlessApiGLogs {
       logLevel: this.options['apig-log-level'] || 'ERROR',
     }
 
+    if (this.options['apig-log-dataTraceEnabled']) conf.dataTraceEnabled = true;
+    if (this.options['apig-metricsEnabled']) conf.metricsEnabled = true;
+
     if (service.custom && service.custom.apigLogs) {
       const customConf = service.custom.apigLogs;
       conf.region = customConf.region || conf.region;
       conf.stage = customConf.stage || conf.stage;
       conf.logLevel = customConf.logLevel || conf.logLevel;
+      if (customConf.dataTraceEnabled && !conf.dataTraceEnabled) conf.dataTraceEnabled = true;
+      if (customConf.metricsEnabled && !conf.metricsEnabled) conf.metricsEnabled = true;
     }
 
     if (this.options['aws-profile']) {
@@ -67,6 +78,22 @@ class ServerlessApiGLogs {
         }
       ],
     };
+
+    if (conf.dataTraceEnabled) {
+      params.patchOperations.push({
+        op: 'replace',
+          path: '/*/*/logging/dataTrace',
+        value: `${conf.dataTraceEnabled}`,
+      });
+    }
+
+    if (conf.metricsEnabled) {
+      params.patchOperations.push({
+        op: 'replace',
+        path: '/*/*/metrics/enabled',
+        value: `${conf.metricsEnabled}`,
+      });
+    }
 
     await apig.updateStage(params).promise();
 
