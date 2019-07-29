@@ -46,13 +46,15 @@ class ServerlessApiGLogs {
     AWS.config.region = conf.region;
 
     const cf = new AWS.CloudFormation();
-    const { StackResourceSummaries: resources } = await cf.listStackResources({
-      StackName: `${service.service}-${conf.stage}`,
-    }).promise();
+    const listStackResources = async (StackName, NextToken) => {
+      const result = await cf.listStackResources({ StackName, NextToken }).promise();
+      return result.NextToken
+        ? [...result.StackResourceSummaries, ...await listStackResources(StackName, result.NextToken)]
+        : result.StackResourceSummaries;
+    };
 
-    const restApi = resources.find((resource) => {
-      return resource.ResourceType === 'AWS::ApiGateway::RestApi';
-    });
+    const restApi = (await listStackResources(`${service.service}-${conf.stage}`))
+      .find((resource) => resource.ResourceType === 'AWS::ApiGateway::RestApi');
 
     const apiId = restApi.PhysicalResourceId;
     const apig = new AWS.APIGateway();
